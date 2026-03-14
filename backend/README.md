@@ -9,6 +9,18 @@
    - Supabase URL & Service Role Key
    - Hugging Face Token (if `LLM_PROVIDER=huggingface`)
    
+## Running the Backend
+
+### Option 1: Docker (Recommended, especially for Windows)
+Running heavy AI libraries like CrewAI on Windows can cause C++ build tool errors when installing packages like `tiktoken` or `regex`. Using Docker bypasses these issues completely.
+
+From the project root directory:
+```bash
+docker-compose up backend --build
+```
+The API will be available at `http://localhost:8000`.
+
+### Option 2: Local Python Env (Mac/Linux)
 3. Install dependencies:
 `pip install -r requirements.txt`
 
