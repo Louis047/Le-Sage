@@ -10,23 +10,34 @@ import {
   IconChart, IconTrending, IconArrowRight,
 } from "@/components/Icons";
 import type { Expert, Idea } from "@/types";
+import { dashboardService } from "@/services/dashboardService";
 
 export default function MentorDashboard() {
   const router = useRouter();
   const [mentorName, setMentorName] = useState("Mentor");
   const [seekerIdeas, setSeekerIdeas] = useState<Idea[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // HOOK: Check auth + role, redirect if wrong role
+    // Check auth + role, redirect if wrong role
     const prefs = onboardingService.getPreferences();
     if (prefs && prefs.role === "seeker") {
       router.push("/dashboard/seeker");
       return;
     }
 
-    // HOOK: Replace with real API call in Phase 3
-    // Load ideas that mentors can review/provide guidance on
-    setSeekerIdeas(mockIdeas);
+    const fetchIdeas = async () => {
+      try {
+        const savedIdeas = await dashboardService.getSavedIdeas();
+        setSeekerIdeas(savedIdeas.length > 0 ? savedIdeas : mockIdeas.slice(0, 4));
+      } catch (err) {
+        console.error("Failed to fetch ideas for mentor review:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchIdeas();
   }, [router]);
 
   return (
@@ -96,8 +107,8 @@ export default function MentorDashboard() {
                 <p>{idea.description.slice(0, 120)}...</p>
                 <div style={{ marginTop: "8px", display: "flex", gap: "8px", alignItems: "center" }}>
                   <span className="score-badge">N: {idea.noveltyScore}%</span>
-                  <span className="score-badge">F: {idea.feasibilityScore}%</span>
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{idea.citations.length} citations</span>
+                  <span className="score-badge">F: {idea.feasibility || idea.feasibilityScore}</span>
+                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{idea.citations?.length || idea.researchCitations?.length || 0} citations</span>
                 </div>
               </div>
               <div>

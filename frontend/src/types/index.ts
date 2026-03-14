@@ -4,10 +4,13 @@ export interface Idea {
   description: string;
   field: string;
   noveltyScore: number;
-  feasibilityScore: number;
+  feasibilityScore?: number; // mapped from backend feasibility
   confidenceScore: number;
-  citations: Citation[];
-  createdAt: string;
+  citations?: Citation[];
+  createdAt?: string;
+  marketPotential?: string;
+  feasibility?: string;
+  researchCitations?: string[];
 }
 
 export interface Citation {
@@ -21,12 +24,11 @@ export interface Citation {
 export interface Expert {
   id: string;
   name: string;
-  title: string;
+  role: string;
   field: string;
-  institution: string;
-  publications: number;
-  hIndex: number;
   avatar: string;
+  domainAuthority: number;
+  publications: number;
   bio: string;
 }
 
@@ -38,10 +40,12 @@ export interface Field {
 }
 
 export interface UserPreferences {
-  role: "seeker" | "mentor";
-  fields: string[];
+  role?: "seeker" | "mentor"; // frontend specific state
+  fields?: string[]; // frontend specific
+  field?: string; // backend mapping
   noveltyLevel: number;
-  mode: "ai" | "expert";
+  mode?: "ai" | "expert";
+  goal?: string; // backend mapping
 }
 
 export type UserRole = "seeker" | "mentor";

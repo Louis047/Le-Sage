@@ -10,22 +10,42 @@ import {
   IconResearch, IconUsers, IconArrowRight, IconChart,
 } from "@/components/Icons";
 import type { Idea } from "@/types";
+import { expertService } from "@/services/expertService";
+import { dashboardService } from "@/services/dashboardService";
 
 export default function SeekerDashboard() {
   const router = useRouter();
   const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [experts, setExperts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("Explorer");
 
   useEffect(() => {
-    // HOOK: Check auth + role, redirect if wrong role
+    // Check auth + role, redirect if wrong role
     const prefs = onboardingService.getPreferences();
     if (prefs && prefs.role === "mentor") {
       router.push("/dashboard/mentor");
       return;
     }
 
-    // HOOK: Replace with dashboardService.getSavedIdeas() in Phase 3
-    setIdeas(mockIdeas);
+    const fetchData = async () => {
+      try {
+        const [savedIdeas, fetchedExperts] = await Promise.all([
+          dashboardService.getSavedIdeas(),
+          expertService.getExperts()
+        ]);
+        
+        // Fallback to mock data if the DB is empty just to show UI structure
+        setIdeas(savedIdeas.length > 0 ? savedIdeas : mockIdeas.slice(0, 1));
+        setExperts(fetchedExperts.length > 0 ? fetchedExperts : mockExperts.slice(0, 3));
+      } catch (err) {
+        console.error("Failed to fetch dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [router]);
 
   return (
@@ -36,7 +56,7 @@ export default function SeekerDashboard() {
           <a href="/" className="logo">IdeaForge</a>
           <nav className="nav-links">
             <a href="/dashboard/seeker" className="nav-link" style={{ color: "var(--text-primary)", fontWeight: 500 }}>Dashboard</a>
-            <a href="#" className="nav-link">Generate Ideas</a>
+            <a href="/generate" className="nav-link">Generate Ideas</a>
             <a href="#" className="nav-link">Saved Ideas</a>
             <a href="#" className="nav-link">Experts</a>
           </nav>
@@ -55,7 +75,7 @@ export default function SeekerDashboard() {
 
         {/* Quick action cards */}
         <div className="dashboard-grid">
-          <div className="dash-card" onClick={() => console.log("HOOK: Navigate to /generate")}>
+          <div className="dash-card" onClick={() => router.push("/generate")} style={{ cursor: "pointer" }}>
             <div className="dash-card-header">
               <div className="dash-card-icon"><IconSparkles size={20} /></div>
               <h3>Generate New Ideas</h3>
@@ -104,8 +124,7 @@ export default function SeekerDashboard() {
               </div>
               <div className="idea-scores">
                 <span className="score-badge">N: {idea.noveltyScore}%</span>
-                <span className="score-badge">F: {idea.feasibilityScore}%</span>
-                <span className="score-badge">C: {idea.confidenceScore}%</span>
+                <span className="score-badge">F: {idea.feasibility || idea.feasibilityScore}</span>
               </div>
             </div>
           ))}
@@ -116,11 +135,11 @@ export default function SeekerDashboard() {
           <IconUsers size={18} /> Recommended Experts
         </div>
         <div className="mentor-list">
-          {mockExperts.slice(0, 3).map((expert) => (
+          {experts.slice(0, 3).map((expert) => (
             <div key={expert.id} className="mentor-card">
-              <div className="mentor-avatar">{expert.name.split(" ").map(n => n[0]).join("")}</div>
+              <div className="mentor-avatar">{expert.name.split(" ").map((n: string) => n[0]).join("")}</div>
               <h4>{expert.name}</h4>
-              <div className="mentor-meta">{expert.institution} · h-index: {expert.hIndex}</div>
+              <div className="mentor-meta">{expert.role} · Authority: {expert.domainAuthority}</div>
               <div className="mentor-bio">{expert.bio}</div>
             </div>
           ))}

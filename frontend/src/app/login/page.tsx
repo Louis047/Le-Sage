@@ -25,6 +25,11 @@ function LoginForm() {
     await new Promise((r) => setTimeout(r, 800));
 
     // Determine dashboard route based on user role
+    if (!onboardingService.hasCompletedOnboarding()) {
+      router.push("/onboarding");
+      return;
+    }
+
     const prefs = onboardingService.getPreferences();
     const role = prefs?.role || "seeker";
 
@@ -41,6 +46,11 @@ function LoginForm() {
     console.log(`OAuth: ${provider}`);
     setLoading(true);
     await new Promise((r) => setTimeout(r, 800));
+
+    if (!onboardingService.hasCompletedOnboarding()) {
+      router.push("/onboarding");
+      return;
+    }
 
     const prefs = onboardingService.getPreferences();
     const role = prefs?.role || "seeker";
