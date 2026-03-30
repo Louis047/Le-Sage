@@ -10,7 +10,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11+-blue)](https://www.python.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)](https://www.typescriptlang.org/)
 
-*"Don't just generate ideas — validate them with research and connect with the minds that can make them real."*
+*"Don't just generate ideas - validate them with research and connect with the minds that can make them real."*
 
 </div>
 
@@ -18,7 +18,7 @@
 
 ## Overview
 
-Le Sage is an AI-powered platform that combines deep research automation, novelty-based idea curation, and expert matchmaking into one intelligent system. It helps aspiring entrepreneurs move from "What should I build?" to "Here's what you should build, why it works, and who can help."
+Le Sage is an AI-powered platform that combines deep research automation, novelty-based idea curation, and expert matchmaking. It helps aspiring entrepreneurs move from "What should I build?" to "Here's what you should build, why it works, and who can help."
 
 ### The Problem
 
@@ -26,21 +26,21 @@ Most startup ideas are built on intuition or generic AI outputs, leading to high
 
 ### The Solution
 
-Le Sage uses multi-agent open-source AI models to synthesize deep research into validated startup opportunities. Every idea is backed by evidence from academic papers, market data, and industry reports — not just optimism.
+Le Sage uses multi-agent open-source AI models to synthesize deep research into validated startup opportunities. Every idea is backed by evidence from academic papers, market data, and industry reports.
 
 ## Core Features
 
 **Research-Backed Idea Generation**  
-Provides startup ideas grounded in the latest academic and industry research in your chosen field, powered by Semantic Scholar, arXiv, and real-time web search.
+Startup ideas grounded in academic and industry research using Semantic Scholar, arXiv, and DuckDuckGo search.
 
 **AI Automation Engine**  
-Automates extensive research on market novelty, competition, and feasibility using multi-agent orchestration with CrewAI.
+Multi-agent system that researches market trends, analyzes competition, and evaluates feasibility using CrewAI orchestration.
 
 **Novelty Control**  
-Users define innovation threshold (1-10 scale) from incremental improvements to breakthrough moonshot ideas, and the AI calibrates accordingly.
+Adjustable innovation threshold (1-10 scale) from incremental improvements to breakthrough ideas.
 
 **Expert Matchmaking**  
-Dual-mode ideation: AI-generated ideas or connections with field-specific human experts backed by research credentials.
+Connect with field-specific experts backed by research credentials (in development).
 
 ## Architecture
 
@@ -163,17 +163,12 @@ Open `http://localhost:3000`
 
 ## Usage
 
-### Generating Research-Backed Ideas
+### Generating Ideas
 
-1. **Onboarding**: Select your field of interest and set novelty threshold
-2. **Generation**: AI agents research academic papers, patents, and market data
-3. **Review**: Each idea includes:
-   - Title and description
-   - Market potential assessment
-   - Feasibility score
-   - Novelty rating (matches your threshold)
-   - Research citations with links
-4. **Save**: Ideas saved to dashboard for future reference
+1. **Onboarding**: Select field of interest and set novelty threshold (1-10)
+2. **Generation**: Multi-agent pipeline researches academic papers and market trends
+3. **Review**: Each idea shows title, description, feasibility score, novelty rating, and research citations
+4. **Save**: Store ideas to dashboard
 
 ### Multi-Agent Research Flow
 
@@ -184,13 +179,13 @@ User Request → Research Agent → Analysis Agent → Synthesis Agent
               DuckDuckGo      arXiv API          with Citations
 ```
 
-## API Rate Limits
+## Rate Limiting
 
-**Semantic Scholar**: 1 request/second (enforced via throttling)  
-**Idea Generation**: 5 requests/hour per IP  
-**Global API**: 50 requests/hour, 200 requests/day per IP
+**Semantic Scholar API**: 1 request/second (enforced via throttling)  
+**Idea Generation Endpoint**: 5 requests/hour per IP  
+**Global API Limit**: 50 requests/hour, 200 requests/day per IP
 
-Rate limiting automatically falls back to in-memory storage if Redis is unavailable.
+Falls back to in-memory rate limiting if Redis is unavailable.
 
 ## Development
 
@@ -214,16 +209,11 @@ pytest
 
 ## Deployment
 
-**Frontend**: Cloudflare Pages (recommended) or Vercel  
-**Backend**: Render free tier or Docker container on any VPS  
-**Database**: Supabase managed PostgreSQL  
-**LLM**: Ollama self-hosted or HuggingFace Inference API
-
-Total cost at MVP stage: **$0/month** using free tiers.
+Not yet deployed. Project is currently in active development for FOSSHack 2026.
 
 ## Contributing
 
-This project is part of an active development cycle. Contributions are currently limited to the core team. For feature requests or bug reports, please open an issue.
+This project is being developed for FOSSHack 2026. For issues or questions, open an issue on GitHub.
 
 ## License
 
@@ -231,24 +221,24 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
-Built with 100% open-source tools:
-- [Next.js](https://nextjs.org/) - React framework
-- [FastAPI](https://fastapi.tiangolo.com/) - Python web framework
-- [CrewAI](https://www.crewai.com/) - Multi-agent orchestration
-- [Ollama](https://ollama.ai/) - Local LLM runtime
-- [Supabase](https://supabase.com/) - Backend-as-a-Service
-- [Semantic Scholar](https://www.semanticscholar.org/) - Academic search
+Built with open-source tools:
+- [Next.js](https://nextjs.org/)
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [CrewAI](https://www.crewai.com/)
+- [Ollama](https://ollama.ai/)
+- [Supabase](https://supabase.com/)
+- [Semantic Scholar](https://www.semanticscholar.org/)
 
 ## Demo
 
-Demo video and live deployment links to be added upon completion.
+Demo video to be added.
 
 ---
 
 <div align="center">
 
-**[Website](https://lesage-ai.vercel.app)** · **[Documentation](#)** · **[Report Bug](https://github.com/Louis047/Le-Sage/issues)**
+**[Report Bug](https://github.com/Louis047/Le-Sage/issues)**
 
-Built by [Louis047](https://github.com/Louis047) and contributors
+Built by **Lone** and **Barshan** for **FOSSHack 2026**
 
 </div>
