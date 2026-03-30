@@ -42,8 +42,9 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Project instructions
+# Project instructions & planning docs
 IdeaForge.md
+Le-Sage.md
 
 # Project Conversation
 convo/
