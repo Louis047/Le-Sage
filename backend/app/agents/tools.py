@@ -4,12 +4,17 @@ from duckduckgo_search import DDGS
 from pydantic import Field
 import time
 import logging
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 # Simple in-memory throttle tracking
 _last_search_time = 0
 _search_delay = 2  # Minimum 2 seconds between searches
+
+# Semantic Scholar API throttle - CRITICAL: 1 request per second limit
+_last_semantic_time = 0
+_semantic_delay = 1.0  # Exactly 1 second between requests (API requirement)
 
 class WebSearchTool(BaseTool):
     name: str = "Web Search Tool"
@@ -45,11 +50,25 @@ class AcademicSearchTool(BaseTool):
     def _run(self, query: str) -> str:
         """
         Search Semantic Scholar API for academic papers.
-        Free API with rate limits: 100 requests per 5 minutes.
+        CRITICAL: Rate limit is 1 request per second with API key.
         """
         import httpx
+        global _last_semantic_time
         
         try:
+            # CRITICAL: Enforce 1 request per second rate limit
+            time_since_last = time.time() - _last_semantic_time
+            if time_since_last < _semantic_delay:
+                sleep_time = _semantic_delay - time_since_last
+                logger.info(f"Semantic Scholar throttle: sleeping {sleep_time:.2f}s")
+                time.sleep(sleep_time)
+            
+            # Check if API key is configured
+            api_key = settings.SEMANTIC_SCHOLAR_API_KEY
+            if not api_key:
+                logger.warning("Semantic Scholar API key not configured, using fallback")
+                return self._fallback_response(query)
+            
             # Semantic Scholar API endpoint
             url = "https://api.semanticscholar.org/graph/v1/paper/search"
             params = {
@@ -58,14 +77,21 @@ class AcademicSearchTool(BaseTool):
                 "fields": "title,year,authors,abstract,url,citationCount"
             }
             
-            # Rate limit: wait a bit between requests
-            time.sleep(1)
+            # API key must be sent in x-api-key header
+            headers = {
+                "x-api-key": api_key
+            }
             
             with httpx.Client(timeout=10.0) as client:
-                response = client.get(url, params=params)
+                response = client.get(url, params=params, headers=headers)
+                _last_semantic_time = time.time()  # Update timestamp after request
                 
                 if response.status_code == 429:
-                    logger.warning("Semantic Scholar rate limit hit, using fallback")
+                    logger.warning("Semantic Scholar rate limit exceeded, using fallback")
+                    return self._fallback_response(query)
+                
+                if response.status_code == 403:
+                    logger.error("Semantic Scholar API key invalid")
                     return self._fallback_response(query)
                 
                 if response.status_code != 200:
@@ -76,6 +102,7 @@ class AcademicSearchTool(BaseTool):
                 papers = data.get("data", [])
                 
                 if not papers:
+                    logger.info(f"No papers found for query: {query}")
                     return self._fallback_response(query)
                 
                 # Format results
@@ -90,6 +117,7 @@ class AcademicSearchTool(BaseTool):
                         "abstract": (paper.get("abstract", "") or "")[:200]  # Truncate
                     })
                 
+                logger.info(f"Found {len(results)} papers for: {query}")
                 return json.dumps(results, indent=2)
                 
         except Exception as e:

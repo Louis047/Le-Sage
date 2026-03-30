@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     LLM_PROVIDER: str = "ollama"
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     HF_TOKEN: str = ""
+    
+    # Semantic Scholar API
+    SEMANTIC_SCHOLAR_API_KEY: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",
