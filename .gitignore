@@ -48,3 +48,9 @@ Le-Sage.md
 
 # Project Conversation
 convo/
+
+# Debug/test scripts
+backend/debug_*.py
+backend/test_*.py
+backend/run_server.py
+backend/server_*.txt
