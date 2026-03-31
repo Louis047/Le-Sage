@@ -238,7 +238,7 @@ Built with open-source tools:
 
 ## Demo
 
-Demo video to be added.
+[Demo Video Folder](https://drive.google.com/drive/folders/1r1fOTWfwzF4KMLDzjceZd1pMEdGXX2k5?usp=sharing)
 
 ---
 
